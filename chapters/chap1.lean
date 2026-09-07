@@ -287,4 +287,54 @@ example {a b : ℚ} (h1 : a ≥ 0) (h2 : b ≥ 0) (h3 : a + b ≤ 8) :
     _ ≤ 7 * b + 9 * 8 := by gcongr
     _ = 7 * b + 72 := by norm_num
 
+-- 1.4.11
+example {x y : ℤ} (h1 : x + 3 ≥ 2 * y) (h2 : 1 ≤ y) : x ≥ -1 :=
+  calc
+    x = x + 3 - 3 := by ring
+    _ ≥ 2 * y - 3 := by gcongr
+    _ ≥ 2 * 1 - 3 := by gcongr
+    _ >= -1 := by norm_num
+
+example {a b : ℚ} (h1 : 3 ≤ a) (h2 : a + 2 * b ≥ 4) : a + b ≥ 3 :=
+  calc
+    a + b = (a + (a + 2 * b)) / 2 := by ring
+    _ ≥ (3 + 4) / 2 := by gcongr
+    _ ≥ 3 := by norm_num
+
+example {x : ℤ} (hx : x ≥ 9) : x ^ 3 - 8 * x ^ 2 + 2 * x ≥ 3 := by
+  have hx0 : 0 ≤ x := by linarith
+  calc
+    x ^ 3 - 8 * x ^ 2 + 2 * x = (x - 8) * x ^ 2 + 2 * x := by ring
+    _ ≥ (9 - 8) * x ^ 2 + 2 * x := by gcongr
+    _ = x ^ 2 +  2 * x := by ring
+    _ ≥ 9^2 + 2 * 9 := by gcongr
+    _ ≥ 3 := by norm_num
+
+example {n : ℤ} (hn : n ≥ 10) : n ^ 4 - 2 * n ^ 2 > 3 * n ^ 3 := by
+  calc
+    n ^ 4 - 2 * n ^ 2 = n * (n ^ 3) - 2 * n ^ 2 := by ring
+    _ ≥ 10 * n ^3 - 2 * n ^2 := by gcongr
+    _ = 3 * n ^3 + (7 * n - 2) * n ^ 2 := by ring
+    _ > 3 * n ^ 3 := by nlinarith
+
+example {n : ℤ} (h1 : n ≥ 5) : n ^ 2 - 2 * n + 3 > 14 :=
+  calc
+    n ^ 2 - 2 * n + 3 = (n - 2) * n + 3 := by ring
+    _ ≥ (5 - 2) * n + 3 := by nlinarith
+    _ = 3 * n + 3 := by norm_num
+    _ ≥ 3 * 5 + 3 := by gcongr
+    _ > 14 := by norm_num
+
+example {x : ℚ} : x ^ 2 - 2 * x ≥ -1 :=
+  calc
+    x ^ 2 - 2 * x = (x ^ 2 - 2 * x + 1) - 1 := by ring
+    _ = (x - 1) ^ 2 - 1 := by ring
+    _ ≥ 0 - 1 := by nlinarith
+    _ = -1 := by norm_num
+
+example (a b : ℝ) : a ^ 2 + b ^ 2 ≥ 2 * a * b :=
+  calc
+    a ^ 2 + b ^ 2 = (a - b) ^ 2 + 2 * a * b := by ring
+    _ ≥ 2 * a * b := by nlinarith
+
 end Sec_1_4

@@ -1,8 +1,11 @@
 import Mathlib.Tactic.Ring.RingNF
 import Mathlib.Data.Real.Basic  -- Note this works with lean 4.33.1
 import Mathlib.Data.Rat.Init
+import Mathlib.Tactic
 
 /- Chapter 1: Proofs by calculation. -/
+
+-- Equalities section 1.3
 section Sec_1_3
 
 example {a b : ℚ}
@@ -100,10 +103,6 @@ example {z : ℝ} (h1 : z ^ 2 - 2 = 0) : z ^ 4 - z ^ 3 - z ^ 2 + 2 * z + 1 = 3 :
     (z ^ 2 - 2 + 2) ^ 2 - z * (z ^ 2 - 2) - (z ^ 2 - 2 + 2) + 1 := by ring
   _ = ( 0 + 2 )^2 - z * 0 - (0 + 2) + 1 := by rw[h1]
   _ = 3 := by ring
-
-end Sec_1_3
-
-section Ex_1_3
 
 example {x y : ℝ} (h1 : x = 3) (h2 : y = 4 * x - 3) : y = 9 :=
   calc
@@ -214,4 +213,78 @@ example {p q r : ℚ} (h1 : p + q + r = 0) (h2 : p * q + p * r + q * r = 2) :
     (p + q + r )^2 - 2 * (p * q + p * r + q * r ) := by ring
   _ = 0 ^ 2 - 2 * 2 := by rw[h1, h2]
   _ = -4 := by ring
-end Ex_1_3
+
+end Sec_1_3
+
+-- Inequalities section 1.4
+section Sec_1_4
+
+-- 1.4.2
+example {r s : ℚ} (h1 : s + 3 ≥ r) (h2 : s + r ≤ 3) : r ≤ 3 :=
+  calc
+    r = (s + r + r - s) / 2 := by ring
+    _ ≤ (3 + (s + 3) - s) / 2 := by gcongr
+    _ = 3 := by ring
+
+-- 1.4.3
+example {x y : ℝ} (h1 : y ≤ x + 5) (h2 : x ≤ -2) : x + y < 2 :=
+  calc
+    x + y ≤  -2 + x + 5 := by linarith
+    _ ≤ -2 - 2 + 5 := by linarith
+    _ = 1 := by ring
+    _ < 2 := by norm_num
+
+-- 1.4.4
+example {u v x y A B : ℝ} (_h1 : 0 < A) (h2 : A ≤ 1) (h3 : 1 ≤ B) (h4 : x ≤ B)
+    (h5 : y ≤ B) (h6 : 0 ≤ u) (h7 : 0 ≤ v) (h8 : u < A) (h9 : v < A) :
+    u * y + v * x + u * v < 3 * A * B :=
+  calc
+    u * y + v * x + u * v
+      ≤ u * B + v * B + u * v := by gcongr
+    _ ≤ A * B + A * B + A * v := by gcongr
+    _ ≤ A * B + A * B + 1 * v := by gcongr
+    _ ≤ A * B + A * B + B * v := by gcongr
+    _ < A * B + A * B + B * A := by gcongr
+    _ = 3 * A * B := by ring
+
+-- 1.4.5
+example {t : ℚ} (ht : t ≥ 10) : t ^ 2 - 3 * t - 17 ≥ 5 :=
+  calc
+    t ^ 2 - 3 * t - 17
+      = t * t - 3 * t - 17 := by ring
+    _ ≥ 10 * t - 3 * t - 17 := by gcongr
+    _ = 7 * t - 17 := by ring
+    _ ≥ 7 * 10 - 17 := by gcongr
+    _ ≥ 5 := by norm_num
+
+-- 1.4.6
+example {n : ℤ} (hn : n ≥ 5) : n ^ 2 > 2 * n + 11 :=
+  calc
+  n ^ 2 = n * n := by ring
+  _ ≥  5 * n := by gcongr
+  _ = 2 * n + 3 * n := by ring
+  _ ≥  2 * n + 3 * 5 := by gcongr
+  _ = 2 * n + 15 := by ring
+  _ > 2 * n + 11 := by norm_num
+
+-- 1.4.8
+example {x y : ℝ} (h : x ^ 2 + y ^ 2 ≤ 1) : (x + y) ^ 2 < 3 :=
+  calc
+    (x + y) ^ 2 ≤ (x + y) ^ 2 + (x - y) ^ 2 := by nlinarith
+    _ = 2 * (x ^ 2 + y ^ 2) := by ring
+    _ ≤ 2 * 1 := by gcongr
+    _ < 3 := by norm_num
+
+-- 1.4.9
+example {a b : ℚ} (h1 : a ≥ 0) (h2 : b ≥ 0) (h3 : a + b ≤ 8) :
+    3 * a * b + a ≤ 7 * b + 72 :=
+  calc
+    3 * a * b + a
+      ≤ 2 * b ^ 2 + a ^ 2 + (3 * a * b + a) := by nlinarith
+    _ = 2 * ((a + b) * b) + (a + b) * a + a := by ring
+    _ ≤ 2 * (8 * b) + 8 * a + a := by gcongr
+    _ = 7 * b + 9 * (a + b) := by ring
+    _ ≤ 7 * b + 9 * 8 := by gcongr
+    _ = 7 * b + 72 := by norm_num
+
+end Sec_1_4

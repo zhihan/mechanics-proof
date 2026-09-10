@@ -235,4 +235,100 @@ example {m : ℕ} : m ^ 2 + 4 * m ≠ 46 := by
   · apply ne_of_gt
     nlinarith
 
+-- 2.4.2
+example {p : ℚ} (hp : p ^ 2 ≤ 8) : p ≥ -5 := by
+  have hp' : -3 ≤ p ∧ p ≤ 3
+  · apply abs_le_of_sq_le_sq'
+    calc
+      p ^ 2 ≤ 9 := by linarith
+      _ = 3 ^ 2 := by norm_num
+    norm_num
+  linarith
+
+-- 2.5.2
+example {t : ℝ} (h : ∃ a : ℝ, a * t < 0) : t ≠ 0 := by
+  obtain ⟨x, hxt⟩ := h
+  have H := le_or_gt x 0
+  obtain hx | hx := H
+  . nlinarith
+  . have hxt' : 0 < (-x) * t := by
+      calc
+        0 = - (x * t) + (x * t) := by ring
+        _ < - (x * t) + 0       := by rel [hxt]
+        _ = (-x) * t            := by ring
+    nlinarith
+
+-- 2.5.5
+example : ∃ m n : ℤ, m ^ 2 - n ^ 2 = 11 := by
+  use 6, 5
+  norm_num
+
+-- 2.5.6
+example (a : ℤ) : ∃ m n : ℤ, m ^ 2 - n ^ 2 = 2 * a + 1 := by
+  use a + 1, a
+  ring
+
+-- 2.5.7
+example {p q : ℝ} (h : p < q) : ∃ x, p < x ∧ x < q := by
+  use p/2 + q/2
+  apply And.intro
+  . linarith
+  . linarith
+
+-- 2.5.9
+example : ∃ t : ℚ, t ^ 2 = 1.69 := by
+  use 1.3
+  norm_num
+
+example : ∃ m n : ℤ, m ^ 2 + n ^ 2 = 85 := by
+  use 9, 2
+  norm_num
+
+example : ∃ x : ℝ, x < 0 ∧ x ^ 2 < 1 := by
+  use -0.5
+  norm_num
+
+example : ∃ a b : ℕ, 2 ^ a = 5 * b + 1 := by
+  use 4, 3
+  norm_num
+
+example (x : ℚ) : ∃ y : ℚ, y ^ 2 > x := by
+  rcases le_or_gt x 0 with hn | hp
+  . use x - 1
+    nlinarith
+  . use x + 1
+    nlinarith
+
+example {t : ℝ} (h : ∃ a : ℝ, a * t + 1 < a + t) : t ≠ 1 := by
+  obtain ⟨x, hxt⟩ := h
+  have h0 : (x - 1) * (t - 1) < 0 :=
+    calc
+      (x - 1) * (t - 1) = x * t - x - t + 1 := by ring
+      _ < 0 := by linarith
+  rintro rfl  -- t ≠ 1 is t = 0 → False
+  nlinarith
+
+example {m : ℤ} (h : ∃ a, 2 * a = m) : m ≠ 5 := by
+  obtain ⟨x, hxt⟩ := h
+  omega
+
+example {n : ℤ} : ∃ a, 2 * a ^ 3 ≥ n * a + 7 := by
+  use |n| + 2
+  have h1 : n ≤ |n| := le_abs_self n
+  have h2 : 0 ≤ |n| := abs_nonneg n
+  have h_cube : (|n| + 2) ^ 3 = (|n| + 2) * (|n| + 2) * (|n| + 2) := by ring
+  rw [h_cube]
+  nlinarith
+
+example {a b c : ℝ} (ha : a ≤ b + c) (hb : b ≤ a + c) (hc : c ≤ a + b) :
+    ∃ x y z, x ≥ 0 ∧ y ≥ 0 ∧ z ≥ 0 ∧ a = y + z ∧ b = x + z ∧ c = x + y := by
+  use (b + c - a)/2, (a + c - b)/2, (a + b - c)/2
+  refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩
+  . linarith
+  . linarith
+  . linarith
+  . ring
+  . ring
+  . ring
+
 end Sec2
